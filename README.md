@@ -63,3 +63,10 @@ http://127.0.0.1:5000
 Default admin login:
 - username: `admin`
 - password: `admin123`
+
+## License
+
+This project is proprietary and closed-source.  
+No part of this codebase may be copied, modified, or distributed without permission.
+© 2025 Shubham Chakraborty. All Rights Reserved.
+
