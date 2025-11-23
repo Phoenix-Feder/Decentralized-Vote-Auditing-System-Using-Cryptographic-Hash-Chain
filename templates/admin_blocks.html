@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+
+  <h2 class="mb-4 text-center text-gradient">Blockchain Audit Ledger</h2>
+
+  <!-- Table View -->
+  <div class="glass-card mb-5 p-4">
+    <h4 class="mb-3">Detailed Table View</h4>
+    <div class="table-responsive">
+      <table class="table table-dark table-bordered align-middle">
+        <thead>
+          <tr>
+            <th>Block</th>
+            <th>Masked User</th>
+            <th>Candidate</th>
+            <th>Party</th>
+            <th>Hash</th>
+            <th>Previous Hash</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for b in blocks %}
+          <tr>
+            <td>{{ b.index_no }}</td>
+            <td>{{ b.masked_user }}</td>
+            <td>{{ b.candidate_name }}</td>
+            <td>{{ b.candidate_party or "Independent" }}</td>
+            <td><code class="hash-text">{{ b.hash }}</code></td>
+            <td><code class="hash-text">{{ b.previous_hash or "-" }}</code></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Visual Chain View -->
+  <div class="glass-card p-4">
+    <h4 class="mb-3">Visual Chain View</h4>
+    <div class="chain-view d-flex overflow-auto py-3" style="gap: 30px;">
+      {% for b in blocks %}
+        <div class="block-card neon-block p-3 text-center">
+          <div class="fw-bold mb-1">Block {{ b.index_no }}</div>
+          <div class="small text-muted mb-2">{{ b.masked_user }}</div>
+          <code class="hash-small">{{ b.hash[:12] }}...</code>
+
+          {% if not loop.last %}
+            <div class="arrow-down mt-3">↓</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

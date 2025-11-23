@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row align-items-center mb-4">
+  <div class="col-lg-8">
+    <h3 class="mb-2 fw-semibold">Your Election Dashboard</h3>
+    {% if election %}
+      <p class="text-muted small mb-0">
+        Current Election:
+        <strong>{{ election['name'] }}</strong>
+        · Status:
+        <span class="badge bg-info text-dark">{{ status }}</span>
+        · Dates:
+        {% if election['start_date'] %}
+          {{ election['start_date'] }}
+        {% else %}
+          N/A
+        {% endif %}
+        –
+        {% if election['end_date'] %}
+          {{ election['end_date'] }}
+        {% else %}
+          N/A
+        {% endif %}
+      </p>
+    {% else %}
+      <p class="text-muted small mb-0">
+        No election configured by admin.
+      </p>
+    {% endif %}
+  </div>
+  <div class="col-lg-4 mt-3 mt-lg-0 text-lg-end">
+    {% if has_voted and vote_row %}
+      <div class="pill-notice pill-success">
+        <span class="pill-label">You have voted</span>
+        <span class="pill-detail">
+          {{ vote_row['candidate_name'] }}
+          {% if vote_row['candidate_party'] %}
+            ({{ vote_row['candidate_party'] }})
+          {% endif %}
+          · {{ vote_row['created_at'][:10] if vote_row['created_at'] else '' }}
+        </span>
+      </div>
+    {% elif election %}
+      <div class="pill-notice pill-warning">
+        <span class="pill-label">Vote pending</span>
+        <span class="pill-detail">You have not voted yet in this election.</span>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% if not election %}
+  <div class="alert alert-info shadow-sm app-alert">
+    Please contact the administrator to configure an election.
+  </div>
+{% else %}
+  <div class="row g-3">
+    {% for c in candidates %}
+    <div class="col-md-4">
+      <div class="card shadow-sm candidate-card float-card">
+        <div class="card-body d-flex flex-column justify-content-between">
+          <div>
+            <h5 class="card-title mb-1">{{ c['name'] }}</h5>
+            <p class="card-text text-muted small mb-2">
+              {% if c['party'] %}
+                {{ c['party'] }}
+              {% else %}
+                Independent
+              {% endif %}
+            </p>
+            <p class="card-text text-muted small">
+              Candidate ID: {{ c['id'] }}
+            </p>
+          </div>
+          <div>
+            {% if not has_voted %}
+            <a href="{{ url_for('vote', candidate_id=c['id']) }}" class="btn btn-success w-100 app-btn-success">
+              Cast Vote
+            </a>
+            {% else %}
+            <button class="btn btn-outline-secondary w-100" disabled>
+              Vote Submitted
+            </button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

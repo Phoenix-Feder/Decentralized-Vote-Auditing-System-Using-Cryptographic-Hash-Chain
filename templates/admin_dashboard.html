@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-3">
+  <div class="col">
+    <h3 class="mb-1 fw-semibold">Admin Dashboard</h3>
+    {% if election %}
+    <p class="text-muted small mb-0">
+      Managing election: <strong>{{ election['name'] }}</strong> ·
+      Status: <span class="badge bg-info text-dark">{{ status }}</span>
+    </p>
+    {% else %}
+    <p class="text-muted small mb-0">
+      No election configured.
+    </p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm stat-card float-card">
+      <div class="card-body">
+        <div class="stat-label text-muted">Registered Users</div>
+        <div class="stat-value">{{ total_users }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm stat-card float-card">
+      <div class="card-body">
+        <div class="stat-label text-muted">Total Votes Cast</div>
+        <div class="stat-value">{{ total_votes }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm stat-card float-card">
+      <div class="card-body">
+        <div class="stat-label text-muted">Candidates</div>
+        <div class="stat-value">{{ total_candidates }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-3">
+  <div class="col">
+    <div class="pill-notice pill-success">
+      <span class="pill-label">Turnout</span>
+      <span class="pill-detail">
+        {{ unique_voters }} voters out of {{ total_users }} users
+        ({{ turnout_percentage }}%)
+      </span>
+    </div>
+  </div>
+</div>
+<div class="row mb-3">
+  <div class="col">
+    <form method="POST" action="{{ url_for('admin_reset_election') }}"
+          onsubmit="return confirm('This will delete ALL votes. Continue?');">
+      <button type="submit" class="btn btn-outline-danger btn-sm">
+        Reset Election (Clear All Votes)
+      </button>
+    </form>
+  </div>
+</div>
+
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card shadow-sm float-card mb-3">
+      <div class="card-body">
+        <div class="row mb-3">
+  <div class="col d-flex flex-wrap gap-2">
+    <form method="POST" action="{{ url_for('admin_reset_election') }}"
+          onsubmit="return confirm('This will delete ALL votes. Continue?');">
+      <button type="submit" class="btn btn-outline-danger btn-sm">
+        Reset Election (Clear All Votes)
+      </button>
+    </form>
+    <form method="GET" action="{{ url_for('admin_verify_chain') }}">
+      <button type="submit" class="btn btn-outline-info btn-sm">
+        Verify Vote Blockchain
+      </button>
+    </form>
+    <a href="{{ url_for('admin_blocks') }}" class="btn btn-outline-light btn-sm">
+      View Blockchain Ledger
+    </a>
+  </div>
+</div>
+
+<h5 class="card-title mb-3">Election Details</h5>
+        <form method="POST" action="{{ url_for('admin_update_election') }}">
+          <div class="mb-3">
+            <label class="form-label">Election Name</label>
+            <input type="text" name="name" class="form-control app-input"
+                   value="{{ election['name'] if election else '' }}">
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Start Date</label>
+              <input type="date" name="start_date" class="form-control app-input"
+                     value="{{ election['start_date'] if election and election['start_date'] else '' }}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">End Date</label>
+              <input type="date" name="end_date" class="form-control app-input"
+                     value="{{ election['end_date'] if election and election['end_date'] else '' }}">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm app-btn-primary">
+            Update Election
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm float-card mb-3">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Add Candidate</h5>
+        <form method="POST" action="{{ url_for('admin_add_candidate') }}">
+          <div class="mb-3">
+            <label class="form-label">Candidate Name</label>
+            <input type="text" name="name" class="form-control app-input" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Party</label>
+            <input type="text" name="party" class="form-control app-input" placeholder="Optional">
+          </div>
+          <button type="submit" class="btn btn-success btn-sm app-btn-success">
+            Add Candidate
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-3">
+  <div class="col">
+    <div class="card shadow-sm float-card">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Current Candidates</h5>
+        {% if candidates %}
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Party</th>
+                <th style="width: 120px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for c in candidates %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ c['name'] }}</td>
+                <td>{{ c['party'] or 'Independent' }}</td>
+                <td>
+                  <form method="POST"
+                        action="{{ url_for('admin_delete_candidate', candidate_id=c['id']) }}"
+                        onsubmit="return confirm('Delete candidate {{ c['name'] }} and all their votes?');">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                      Remove
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p class="text-muted small mb-0">
+          No candidates added yet.
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

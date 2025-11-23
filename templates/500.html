@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm float-card text-center py-4">
+      <div class="card-body">
+        <h2 class="mb-2">500</h2>
+        <p class="text-muted mb-3">Something went wrong on the server.</p>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary app-btn-primary">Back to Dashboard</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

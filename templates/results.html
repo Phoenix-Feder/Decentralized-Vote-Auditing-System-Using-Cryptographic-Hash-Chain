@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-3 align-items-center">
+  <div class="col">
+    <h3 class="mb-1 fw-semibold">Election Results (Admin View)</h3>
+    {% if election %}
+    <p class="text-muted small mb-0">
+      Election: <strong>{{ election['name'] }}</strong> ·
+      Dates: {{ election['start_date'] }} – {{ election['end_date'] }}
+    </p>
+    {% endif %}
+  </div>
+  <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+    <a href="{{ url_for('admin_export_results') }}" class="btn btn-outline-light btn-sm me-2 app-btn-ghost">
+      Download Results CSV
+    </a>
+    <button id="refreshResults" class="btn btn-outline-primary btn-sm app-btn-ghost">
+      Refresh & Update Charts
+    </button>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card shadow-sm float-card">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Results Table</h5>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle" id="resultsTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Candidate</th>
+                <th>Party</th>
+                <th>Votes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in results %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ row['name'] }}</td>
+                <td>{{ row['party'] or 'Independent' }}</td>
+                <td>{{ row['votes'] }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-3 mb-0 text-muted small">
+          Data can be refreshed from the backend using the <code>/api/results</code> endpoint.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow-sm float-card mb-3">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Votes per Candidate</h5>
+        <canvas id="resultsChart" height="200"></canvas>
+      </div>
+    </div>
+    <div class="card shadow-sm float-card">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Vote Share by Party</h5>
+        <canvas id="partyChart" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

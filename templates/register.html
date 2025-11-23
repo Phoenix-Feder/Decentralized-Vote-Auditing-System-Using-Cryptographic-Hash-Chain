@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow-sm auth-card float-card">
+      <div class="card-body">
+        <h4 class="card-title mb-2 text-center">Create your account</h4>
+        <p class="text-muted small text-center mb-4">
+          Register to participate in the election. Password must be at least 8 characters.
+        </p>
+        <form method="POST" novalidate>
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" name="username" class="form-control app-input" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" name="password" class="form-control app-input" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Confirm Password</label>
+            <input type="password" name="confirm" class="form-control app-input" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100 mb-2 app-btn-primary">
+            Register
+          </button>
+          <p class="mt-2 mb-0 text-center small">
+            Already registered?
+            <a href="{{ url_for('login') }}" class="link-primary">Login</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
